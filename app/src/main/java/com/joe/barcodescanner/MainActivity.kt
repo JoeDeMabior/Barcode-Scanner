@@ -2,7 +2,9 @@ package com.joe.barcodescanner
 
 import android.Manifest.permission.CAMERA
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -89,7 +91,19 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
     }
 
     override fun handleResult(result: Result?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        val scanResult = result?.text
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Scan Result")
+        builder.setPositiveButton("OK") { _, _ ->
+            scannerView.resumeCameraPreview(this)
+        }
+        builder.setNeutralButton("Visit") { _, _ ->
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(scanResult)))
+        }
+        builder.setMessage(scanResult)
+
+        val alert = builder.create()
+        alert.show()
     }
 
     companion object {
