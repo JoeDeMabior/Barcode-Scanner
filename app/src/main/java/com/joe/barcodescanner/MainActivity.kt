@@ -71,6 +71,23 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
             .show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkPermission()) {
+                scannerView.setResultHandler(this)
+                scannerView.startCamera()
+            } else {
+                checkPermission()
+            }
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        scannerView.stopCamera()
+    }
+
     override fun handleResult(result: Result?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
