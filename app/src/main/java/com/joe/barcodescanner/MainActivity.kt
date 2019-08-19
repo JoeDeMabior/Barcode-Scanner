@@ -27,7 +27,7 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (!checkPermission())
-                requestPermission()
+                requestCameraPermission()
         }
     }
 
@@ -35,28 +35,27 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
         return ContextCompat.checkSelfPermission(this, CAMERA) == PackageManager.PERMISSION_GRANTED
     }
 
-    private fun requestPermission() {
+    private fun requestCameraPermission() {
         ActivityCompat.requestPermissions(this, arrayOf(CAMERA), REQUEST_CAMERA)
     }
 
-    private fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: Array<Int>) {
-        when (requestCode) {
-            REQUEST_CAMERA -> {
-                if (grantResults.isNotEmpty()) {
-                    val cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
-                    if (cameraAccepted) {
-                        Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (shouldShowRequestPermissionRationale(CAMERA)) {
-                                displayAlertMessage("Access to camera required",
-                                    DialogInterface.OnClickListener { _, _ ->
-                                        requestPermissions(arrayOf(CAMERA), REQUEST_CAMERA)
-                                    }
-                                )
-                                return
-                            }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CAMERA) {
+            if (grantResults.isNotEmpty()) {
+                val cameraAccepted = grantResults[0] == PackageManager.PERMISSION_GRANTED
+                if (cameraAccepted) {
+                    Toast.makeText(this, "Permission granted", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, "Permission denied", Toast.LENGTH_SHORT).show()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        if (shouldShowRequestPermissionRationale(CAMERA)) {
+                            displayAlertMessage("Access to camera required",
+                                DialogInterface.OnClickListener { _, _ ->
+                                    requestPermissions(arrayOf(CAMERA), REQUEST_CAMERA)
+                                }
+                            )
+                            return
                         }
                     }
                 }
