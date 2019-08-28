@@ -8,6 +8,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.WindowManager
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity(), ZXingScannerView.ResultHandler {
 
         scannerView = ZXingScannerView(this)
         setContentView(scannerView)
+
+        window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON)
 
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M) {
             if (!checkPermission())
